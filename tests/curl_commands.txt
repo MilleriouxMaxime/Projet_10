@@ -1,0 +1,56 @@
+# User API Test Commands (Windows CMD Format)
+
+# 1. Create a new user (No authentication required)
+curl -v -X POST http://localhost:8000/api/users/ ^
+  -H "Content-Type: application/json" ^
+  -H "Accept: application/json" ^
+  -d "{\"username\":\"testuser\",\"email\":\"test@example.com\",\"password\":\"testpass123\",\"birth_date\":\"2000-01-01\",\"first_name\":\"Test\",\"last_name\":\"User\"}"
+
+# 2. Get authentication token (Login)
+curl -v -X POST http://localhost:8000/api/token/ ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"testuser\",\"password\":\"testpass123\"}"
+
+# 3. List all users (Authentication required)
+curl -v -X GET http://localhost:8000/api/users/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 4. Get specific user details (Authentication required)
+curl -v -X GET http://localhost:8000/api/users/1/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 5. Update user (Authentication required)
+curl -v -X PUT http://localhost:8000/api/users/1/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"updateduser\",\"email\":\"updated@example.com\",\"first_name\":\"Updated\",\"last_name\":\"User\",\"birth_date\":\"2000-01-01\"}"
+
+# 6. Partial update user (Authentication required)
+curl -v -X PATCH http://localhost:8000/api/users/1/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"first_name\":\"New First Name\"}"
+
+# 7. Delete user (Authentication required)
+curl -v -X DELETE http://localhost:8000/api/users/1/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 8. Test age validation (Should fail for users under 15)
+curl -v -X POST http://localhost:8000/api/users/ ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"younguser\",\"email\":\"young@example.com\",\"password\":\"testpass123\",\"birth_date\":\"2010-01-01\",\"first_name\":\"Young\",\"last_name\":\"User\"}"
+
+# 9. Test email uniqueness (Should fail if email already exists)
+curl -v -X POST http://localhost:8000/api/users/ ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"duplicateemail\",\"email\":\"test@example.com\",\"password\":\"testpass123\",\"birth_date\":\"2000-01-01\",\"first_name\":\"Duplicate\",\"last_name\":\"Email\"}"
+
+# Notes:
+# - Replace TOKEN_HERE with the actual token received from the login endpoint
+# - The user ID (1) in the URLs should be replaced with the actual user ID
+# - All dates should be in YYYY-MM-DD format
+# - The server should be running on localhost:8000
+# - In Windows CMD, use ^ for line continuation
+# - Use double quotes for JSON data and escape inner quotes with \"
+# - The -v flag is optional but helpful for debugging
+# - For token authentication, use "Authorization: Token YOUR_TOKEN" format 
