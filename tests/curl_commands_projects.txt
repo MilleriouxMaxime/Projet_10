@@ -1,0 +1,80 @@
+# Projects and Contributors API Test Commands (Windows CMD Format)
+
+# 1. Create a new project (Authentication required)
+curl -v -X POST http://localhost:8000/api/projects/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -H "Accept: application/json" ^
+  -d "{\"name\":\"Test Project\",\"description\":\"This is a test project description\"}"
+
+# 2. Get all projects (Authentication required)
+curl -v -X GET http://localhost:8000/api/projects/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 3. Get specific project details (Authentication required)
+curl -v -X GET http://localhost:8000/api/projects/1/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 4. Update project (Authentication required - Only project owner)
+curl -v -X PUT http://localhost:8000/api/projects/1/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"name\":\"Updated Project\",\"description\":\"Updated project description\"}"
+
+# 5. Partial update project (Authentication required - Only project owner)
+curl -v -X PATCH http://localhost:8000/api/projects/1/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"description\":\"Only updating the description\"}"
+
+# 6. Delete project (Authentication required - Only project owner)
+curl -v -X DELETE http://localhost:8000/api/projects/1/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 7. Add contributor to project (Authentication required - Only project owner)
+curl -v -X POST http://localhost:8000/api/projects/1/contributors/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"user\":2,\"role\":\"contributor\"}"
+
+# 8. Get project contributors (Authentication required - Project contributors only)
+curl -v -X GET http://localhost:8000/api/projects/1/contributors/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 9. Remove contributor from project (Authentication required - Only project owner)
+curl -v -X DELETE http://localhost:8000/api/projects/1/contributors/2/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 10. Get user's projects (Authentication required)
+curl -v -X GET http://localhost:8000/api/projects/user-projects/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 11. Test project creation without description (Should work - description is optional)
+curl -v -X POST http://localhost:8000/api/projects/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"name\":\"Project Without Description\"}"
+
+# 12. Test duplicate contributor (Should fail)
+curl -v -X POST http://localhost:8000/api/projects/1/contributors/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"user\":2,\"role\":\"contributor\"}"
+
+# 13. Test project update by non-owner (Should fail)
+curl -v -X PUT http://localhost:8000/api/projects/1/ ^
+  -H "Authorization: Token NON_OWNER_TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"name\":\"Unauthorized Update\",\"description\":\"This should fail\"}"
+
+# Notes:
+# - Replace TOKEN_HERE with the actual token received from the login endpoint
+# - The project ID (1) in the URLs should be replaced with the actual project ID
+# - The user ID (2) in the contributor requests should be replaced with the actual user ID
+# - The server should be running on localhost:8000
+# - In Windows CMD, use ^ for line continuation
+# - Use double quotes for JSON data and escape inner quotes with \"
+# - The -v flag is for verbose output (helpful for debugging)
+# - All requests require authentication
+# - Some operations are restricted to project owners only
+# - Contributors can only be added once to a project (unique_together constraint) 
