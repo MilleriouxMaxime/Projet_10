@@ -1,0 +1,87 @@
+# Issues and Comments API Test Commands (Windows CMD Format)
+
+# 1. Create a new issue (Authentication required - Project contributor)
+curl -v -X POST http://localhost:8000/api/projects/1/issues/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -H "Accept: application/json" ^
+  -d "{\"title\":\"Test Issue\",\"description\":\"This is a test issue\",\"priority\":\"HIGH\",\"status\":\"TODO\",\"tag\":\"BUG\",\"assigned_to\":2}"
+
+# 2. Get all issues for a project (Authentication required - Project contributor)
+curl -v -X GET http://localhost:8000/api/projects/1/issues/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 3. Get specific issue details (Authentication required - Project contributor)
+curl -v -X GET http://localhost:8000/api/projects/1/issues/1/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 4. Update issue (Authentication required - Issue creator or project owner)
+curl -v -X PUT http://localhost:8000/api/projects/1/issues/1/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"title\":\"Updated Issue\",\"description\":\"Updated issue description\",\"priority\":\"MEDIUM\",\"status\":\"IN_PROGRESS\",\"tag\":\"FEATURE\",\"assigned_to\":3}"
+
+# 5. Partial update issue (Authentication required - Issue creator or project owner)
+curl -v -X PATCH http://localhost:8000/api/projects/1/issues/1/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"status\":\"DONE\"}"
+
+# 6. Delete issue (Authentication required - Issue creator or project owner)
+curl -v -X DELETE http://localhost:8000/api/projects/1/issues/1/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 7. Add comment to issue (Authentication required - Project contributor)
+curl -v -X POST http://localhost:8000/api/projects/1/issues/1/comments/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"content\":\"This is a test comment\"}"
+
+# 8. Get issue comments (Authentication required - Project contributor)
+curl -v -X GET http://localhost:8000/api/projects/1/issues/1/comments/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 9. Update comment (Authentication required - Comment creator)
+curl -v -X PUT http://localhost:8000/api/projects/1/issues/1/comments/1/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"content\":\"Updated comment content\"}"
+
+# 10. Delete comment (Authentication required - Comment creator or project owner)
+curl -v -X DELETE http://localhost:8000/api/projects/1/issues/1/comments/1/ ^
+  -H "Authorization: Token TOKEN_HERE"
+
+# 11. Test issue creation with invalid priority (Should fail)
+curl -v -X POST http://localhost:8000/api/projects/1/issues/ ^
+  -H "Authorization: Token TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"title\":\"Invalid Priority Issue\",\"description\":\"This should fail\",\"priority\":\"INVALID\",\"status\":\"TODO\",\"tag\":\"BUG\"}"
+
+# 12. Test issue update by non-contributor (Should fail)
+curl -v -X PUT http://localhost:8000/api/projects/1/issues/1/ ^
+  -H "Authorization: Token NON_CONTRIBUTOR_TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"title\":\"Unauthorized Update\",\"description\":\"This should fail\"}"
+
+# 13. Test comment creation by non-contributor (Should fail)
+curl -v -X POST http://localhost:8000/api/projects/1/issues/1/comments/ ^
+  -H "Authorization: Token NON_CONTRIBUTOR_TOKEN_HERE" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"content\":\"This should fail\"}"
+
+# Notes:
+# - Replace TOKEN_HERE with the actual token received from the login endpoint
+# - The project ID (1) in the URLs should be replaced with the actual project ID
+# - The issue ID (1) in the URLs should be replaced with the actual issue ID
+# - The comment ID (1) in the URLs should be replaced with the actual comment ID
+# - The user IDs (2, 3) in the requests should be replaced with actual user IDs
+# - The server should be running on localhost:8000
+# - In Windows CMD, use ^ for line continuation
+# - Use double quotes for JSON data and escape inner quotes with \"
+# - The -v flag is for verbose output (helpful for debugging)
+# - All requests require authentication
+# - Some operations are restricted to issue creators, comment creators, or project owners
+# - Project contributors can create and view issues and comments
+# - Priority must be one of: LOW, MEDIUM, HIGH
+# - Status must be one of: TODO, IN_PROGRESS, DONE
+# - Tag must be one of: BUG, FEATURE, TASK 
