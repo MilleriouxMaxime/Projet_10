@@ -2,21 +2,29 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Prefetch
 from .models import Project, Contributor, Issue, Comment
 from .permissions import (
     IsProjectContributor, IsProjectOwner, IsIssueCreatorOrProjectOwner,
     IsCommentCreatorOrProjectOwner, IsContributorManager
 )
 from .serializers import (
-    ProjectSerializer, ContributorSerializer, IssueSerializer, CommentSerializer
+    ProjectSerializer, ProjectListSerializer, ContributorSerializer,
+    IssueSerializer, IssueListSerializer, CommentSerializer
 )
+from .pagination import ProjectPagination, IssuePagination, CommentPagination
 
 # Create your views here.
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
+    queryset = Project.objects.select_related('created_by').all()
     permission_classes = [IsAuthenticated, IsProjectOwner]
+    pagination_class = ProjectPagination
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ProjectListSerializer
+        return ProjectSerializer
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -29,20 +37,30 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class ContributorViewSet(viewsets.ModelViewSet):
     serializer_class = ContributorSerializer
     permission_classes = [IsAuthenticated, IsContributorManager]
+    pagination_class = ProjectPagination
 
     def get_queryset(self):
-        return Contributor.objects.filter(project_id=self.kwargs['project_pk'])
+        return Contributor.objects.select_related('user').filter(
+            project_id=self.kwargs['project_pk']
+        )
 
     def perform_create(self, serializer):
         project = Project.objects.get(id=self.kwargs['project_pk'])
         serializer.save(project=project)
 
 class IssueViewSet(viewsets.ModelViewSet):
-    serializer_class = IssueSerializer
     permission_classes = [IsAuthenticated, IsIssueCreatorOrProjectOwner]
+    pagination_class = IssuePagination
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return IssueListSerializer
+        return IssueSerializer
 
     def get_queryset(self):
-        return Issue.objects.filter(project_id=self.kwargs['project_pk'])
+        return Issue.objects.select_related(
+            'created_by__user', 'assigned_to__user'
+        ).filter(project_id=self.kwargs['project_pk'])
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -64,9 +82,12 @@ class IssueViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsCommentCreatorOrProjectOwner]
+    pagination_class = CommentPagination
 
     def get_queryset(self):
-        return Comment.objects.filter(issue_id=self.kwargs['issue_pk'])
+        return Comment.objects.select_related(
+            'created_by__user'
+        ).filter(issue_id=self.kwargs['issue_pk'])
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:

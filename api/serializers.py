@@ -7,7 +7,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username']
         read_only_fields = ['id']
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -15,6 +15,12 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = ['id', 'name', 'description', 'created_by', 'created_at']
         read_only_fields = ['id', 'created_by', 'created_at']
+
+class ProjectListSerializer(ProjectSerializer):
+    created_by = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True
+    )
 
 class ContributorSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
@@ -26,8 +32,8 @@ class ContributorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contributor
-        fields = ['id', 'user', 'user_id', 'project', 'role', 'created_at']
-        read_only_fields = ['id', 'project', 'created_at']
+        fields = ['id', 'user', 'user_id', 'role', 'created_at']
+        read_only_fields = ['id', 'created_at']
 
 class IssueSerializer(serializers.ModelSerializer):
     created_by = serializers.SlugRelatedField(
@@ -43,11 +49,18 @@ class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
         fields = [
-            'id', 'title', 'description', 'project', 'created_by',
+            'id', 'title', 'description', 'created_by',
             'assigned_to', 'priority', 'status', 'tag', 'created_at',
             'updated_at'
         ]
-        read_only_fields = ['id', 'project', 'created_by', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_by', 'created_at', 'updated_at']
+
+class IssueListSerializer(IssueSerializer):
+    class Meta(IssueSerializer.Meta):
+        fields = [
+            'id', 'title', 'priority', 'status', 'tag',
+            'created_by', 'assigned_to', 'created_at'
+        ]
 
 class CommentSerializer(serializers.ModelSerializer):
     created_by = serializers.SlugRelatedField(
@@ -57,5 +70,5 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'issue', 'created_by', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'issue', 'created_by', 'created_at', 'updated_at'] 
+        fields = ['id', 'content', 'created_by', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_by', 'created_at', 'updated_at'] 
