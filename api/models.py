@@ -4,8 +4,16 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Project(models.Model):
+    TYPE_CHOICES = [
+        ('BACKEND', 'Back-end'),
+        ('FRONTEND', 'Front-end'),
+        ('IOS', 'iOS'),
+        ('ANDROID', 'Android'),
+    ]
+    
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='BACKEND')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_projects')
     created_at = models.DateTimeField(auto_now_add=True)
     

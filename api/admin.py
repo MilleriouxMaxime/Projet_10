@@ -3,9 +3,9 @@ from .models import Project, Contributor, Issue, Comment
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_by', 'created_at')
+    list_display = ('name', 'type', 'created_by', 'created_at')
     search_fields = ('name', 'description')
-    list_filter = ('created_at',)
+    list_filter = ('type', 'created_at')
 
 @admin.register(Contributor)
 class ContributorAdmin(admin.ModelAdmin):

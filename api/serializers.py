@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ['id', 'name', 'description', 'created_by', 'created_at']
+        fields = ['id', 'name', 'description', 'type', 'created_by', 'created_at']
         read_only_fields = ['id', 'created_by', 'created_at']
 
 class ProjectListSerializer(ProjectSerializer):

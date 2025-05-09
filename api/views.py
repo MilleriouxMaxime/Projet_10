@@ -32,7 +32,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        project = serializer.save(created_by=self.request.user)
+        # Automatically create a Contributor entry for the project creator
+        Contributor.objects.create(
+            user=self.request.user,
+            project=project,
+            role='author'
+        )
 
 class ContributorViewSet(viewsets.ModelViewSet):
     serializer_class = ContributorSerializer
