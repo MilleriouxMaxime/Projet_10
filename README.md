@@ -46,16 +46,18 @@ python manage.py shell
 python manage.py runserver
 ```
 
+7. Database Management:
+```bash
+# Clean all data from the database (preserves structure)
+python manage.py clean_db
+```
+
 ## Project Structure
 
 - `softdesk/` - Main project directory
 - `api/` - API application directory
 - `users/` - User management application directory
-- `docs/` - Project documentation
 
-## API Documentation
-
-API documentation will be available at `/api/docs/` once the server is running. 
 
 ## Testing with Postman
 
