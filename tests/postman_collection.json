@@ -10,7 +10,7 @@
 			"name": "Authentication",
 			"item": [
 				{
-					"name": "Create User",
+					"name": "Create User1",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -21,17 +21,24 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"test@example.com\",\n    \"password\": \"testpass123\",\n    \"birth_date\": \"2000-01-01\",\n    \"first_name\": \"Test\",\n    \"last_name\": \"User\"\n}"
+							"raw": "{\n    \"username\": \"testuser1\",\n    \"email\": \"test1@example.com\",\n    \"password\": \"testpass123\",\n    \"birth_date\": \"2000-01-01\",\n    \"first_name\": \"User1\",\n    \"last_name\": \"User1\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/users/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "users", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
-					"name": "Get Token",
+					"name": "Create User2",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -42,14 +49,103 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"testpass123\"\n}"
+							"raw": "{\n    \"username\": \"testuser2\",\n    \"email\": \"testuser2@example.com\",\n    \"password\": \"testpass123\",\n    \"birth_date\": \"2000-01-01\",\n    \"first_name\": \"User2\",\n    \"last_name\": \"User2\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Token User1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"token\", response.token); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser1\",\n    \"password\": \"testpass123\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/token/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "token", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"token",
+								""
+							]
 						}
-					}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Token User2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"token\", response.token); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser2\",\n    \"password\": \"testpass123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/token/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"token",
+								""
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -72,14 +168,21 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Test Project\",\n    \"description\": \"This is a test project\"\n}"
+							"raw": "{\n    \"name\": \"Test Project\",\n    \"description\": \"This is a test project\",\n    \"type\": \"FRONTEND\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/projects/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "List Projects",
@@ -93,10 +196,17 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Get Project",
@@ -110,10 +220,18 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Update Project",
@@ -135,10 +253,18 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Delete Project",
@@ -152,10 +278,18 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				}
 			]
 		},
@@ -182,10 +316,19 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/contributors/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "contributors", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"contributors",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "List Contributors",
@@ -199,10 +342,19 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/contributors/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "contributors", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"contributors",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Remove Contributor",
@@ -216,10 +368,20 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/contributors/{{contributor_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "contributors", "{{contributor_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"contributors",
+								"{{contributor_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				}
 			]
 		},
@@ -242,14 +404,23 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Test Issue\",\n    \"description\": \"This is a test issue\",\n    \"priority\": \"HIGH\",\n    \"status\": \"TODO\",\n    \"tag\": \"BUG\",\n    \"assigned_to\": {{contributor_id}}\n}"
+							"raw": "{\n    \"title\": \"Test Issue\",\n    \"description\": \"This is a test issue\",\n    \"priority\": \"HIGH\",\n    \"status\": \"TODO\",\n    \"tag\": \"BUG\",\n    \"assigned_to\": \"testuser1\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "List Issues",
@@ -263,10 +434,19 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Get Issue",
@@ -280,10 +460,20 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/{{issue_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", "{{issue_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								"{{issue_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Update Issue",
@@ -305,10 +495,20 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/{{issue_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", "{{issue_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								"{{issue_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Delete Issue",
@@ -322,10 +522,20 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/{{issue_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", "{{issue_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								"{{issue_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				}
 			]
 		},
@@ -352,10 +562,21 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/{{issue_id}}/comments/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", "{{issue_id}}", "comments", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								"{{issue_id}}",
+								"comments",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "List Comments",
@@ -369,10 +590,21 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/{{issue_id}}/comments/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", "{{issue_id}}", "comments", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								"{{issue_id}}",
+								"comments",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Get Comment",
@@ -386,10 +618,22 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/{{issue_id}}/comments/{{comment_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", "{{issue_id}}", "comments", "{{comment_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								"{{issue_id}}",
+								"comments",
+								"{{comment_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Update Comment",
@@ -411,10 +655,22 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/{{issue_id}}/comments/{{comment_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", "{{issue_id}}", "comments", "{{comment_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								"{{issue_id}}",
+								"comments",
+								"{{comment_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Delete Comment",
@@ -428,23 +684,52 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/projects/{{project_id}}/issues/{{issue_id}}/comments/{{comment_id}}/",
-							"host": ["{{base_url}}"],
-							"path": ["api", "projects", "{{project_id}}", "issues", "{{issue_id}}", "comments", "{{comment_id}}", ""]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{project_id}}",
+								"issues",
+								"{{issue_id}}",
+								"comments",
+								"{{comment_id}}",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	],
 	"variable": [
 		{
 			"key": "base_url",
 			"value": "http://localhost:8000",
-			"type": "string"
-		},
-		{
-			"key": "token",
-			"value": "YOUR_AUTH_TOKEN",
 			"type": "string"
 		},
 		{
@@ -473,4 +758,4 @@
 			"type": "string"
 		}
 	]
-} 
+}
