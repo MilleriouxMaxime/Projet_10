@@ -83,7 +83,7 @@ class IssueViewSet(viewsets.ModelViewSet):
                 'created_by__user', 'assigned_to__user'
             ).filter(
                 project_id=self.kwargs['project_pk']
-            )
+            ).order_by('-created_at')  # Order by creation date, newest first
         except Contributor.DoesNotExist:
             return Issue.objects.none()
 
@@ -122,7 +122,7 @@ class CommentViewSet(viewsets.ModelViewSet):
                 'created_by__user'
             ).filter(
                 issue_id=self.kwargs['issue_pk']
-            )
+            ).order_by('-created_at')  # Order by creation date, newest first
         except Contributor.DoesNotExist:
             return Comment.objects.none()
 
