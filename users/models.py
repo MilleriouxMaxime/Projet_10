@@ -29,6 +29,8 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     birth_date = models.DateField(validators=[validate_age])
     email = models.EmailField(unique=True)
+    can_be_contacted = models.BooleanField(default=False, help_text='Designates whether the user can be contacted.')
+    can_data_be_shared = models.BooleanField(default=False, help_text='Designates whether the user\'s data can be shared.')
     
     objects = UserManager()
     
