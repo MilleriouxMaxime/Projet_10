@@ -5,12 +5,20 @@ class IsProjectContributor(permissions.BasePermission):
     Custom permission to only allow project contributors to access project resources.
     """
     def has_permission(self, request, view):
-        # Allow read-only access to authenticated users
-        if request.method in permissions.SAFE_METHODS:
-            return request.user and request.user.is_authenticated
-        
-        # For write operations, check if user is a contributor
-        project_id = view.kwargs.get('project_pk')
+        # Always require authentication
+        if not request.user or not request.user.is_authenticated:
+            return False
+            
+        # For project creation, allow any authenticated user
+        if view.action == 'create':
+            return True
+            
+        # For project listing, only show projects where user is a contributor
+        if view.action == 'list':
+            return True
+            
+        # For other actions, check if user is a contributor
+        project_id = view.kwargs.get('project_pk') or view.kwargs.get('pk')
         if project_id:
             return request.user.contributions.filter(project_id=project_id).exists()
         return False

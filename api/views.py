@@ -17,9 +17,16 @@ from .pagination import ProjectPagination, IssuePagination, CommentPagination
 # Create your views here.
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.select_related('created_by').all()
-    permission_classes = [IsAuthenticated, IsProjectOwner]
+    permission_classes = [IsAuthenticated, IsProjectContributor]
     pagination_class = ProjectPagination
+
+    def get_queryset(self):
+        if self.action == 'list':
+            # For listing, only show projects where user is a contributor
+            return Project.objects.filter(
+                contributors__user=self.request.user
+            ).select_related('created_by').distinct()
+        return Project.objects.select_related('created_by').all()
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -27,9 +34,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return ProjectSerializer
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
+        if self.action in ['create']:
             return [IsAuthenticated()]
-        return super().get_permissions()
+        return [IsAuthenticated(), IsProjectContributor()]
 
     def perform_create(self, serializer):
         project = serializer.save(created_by=self.request.user)
