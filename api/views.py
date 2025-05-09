@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from .models import Project, Contributor, Issue, Comment
 from .permissions import (
     IsProjectContributor, IsProjectOwner, IsIssueCreatorOrProjectOwner,
@@ -71,9 +71,21 @@ class IssueViewSet(viewsets.ModelViewSet):
         return IssueSerializer
 
     def get_queryset(self):
-        return Issue.objects.select_related(
-            'created_by__user', 'assigned_to__user'
-        ).filter(project_id=self.kwargs['project_pk'])
+        project = Project.objects.get(id=self.kwargs['project_pk'])
+        try:
+            # Check if user is a contributor to the project
+            Contributor.objects.get(
+                user=self.request.user,
+                project=project
+            )
+            # If they are a contributor, show all issues for the project
+            return Issue.objects.select_related(
+                'created_by__user', 'assigned_to__user'
+            ).filter(
+                project_id=self.kwargs['project_pk']
+            )
+        except Contributor.DoesNotExist:
+            return Issue.objects.none()
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -98,9 +110,21 @@ class CommentViewSet(viewsets.ModelViewSet):
     pagination_class = CommentPagination
 
     def get_queryset(self):
-        return Comment.objects.select_related(
-            'created_by__user'
-        ).filter(issue_id=self.kwargs['issue_pk'])
+        issue = Issue.objects.get(id=self.kwargs['issue_pk'])
+        try:
+            # Check if user is a contributor to the project
+            Contributor.objects.get(
+                user=self.request.user,
+                project=issue.project
+            )
+            # If they are a contributor, show all comments for the issue
+            return Comment.objects.select_related(
+                'created_by__user'
+            ).filter(
+                issue_id=self.kwargs['issue_pk']
+            )
+        except Contributor.DoesNotExist:
+            return Comment.objects.none()
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
