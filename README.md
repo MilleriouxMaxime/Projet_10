@@ -56,3 +56,23 @@ python manage.py runserver
 ## API Documentation
 
 API documentation will be available at `/api/docs/` once the server is running. 
+
+## Testing with Postman
+
+To test the API endpoints using Postman:
+
+1. Download and install [Postman](https://www.postman.com/downloads/) if you haven't already.
+
+2. Import the Postman collection:
+   - Open Postman
+   - Click on "Import" button in the top left
+   - Select the `postman_collection.json` file from the project root directory
+   - Click "Import"
+
+3. The collection will be imported with all the necessary endpoints and example requests.
+
+4. Before making requests, make sure the development server is running (`python manage.py runserver`).
+
+5. For authenticated endpoints, you'll need to:
+   - First login using the `/api/token/` endpoint
+   - The token will be set to the `token` global variable to be used in the requests in the "Authorization" tab with the format: `Bearer your_access_token` 
