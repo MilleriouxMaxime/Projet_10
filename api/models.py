@@ -28,6 +28,7 @@ class Contributor(models.Model):
     
     class Meta:
         unique_together = ('user', 'project')
+        ordering = ['-created_at']  # Order by creation date, newest first
     
     def __str__(self):
         return f"{self.user.username} - {self.project.name}"

@@ -13,6 +13,7 @@ from .serializers import (
     IssueSerializer, IssueListSerializer, CommentSerializer
 )
 from .pagination import ProjectPagination, IssuePagination, CommentPagination
+from rest_framework.exceptions import ValidationError
 
 # Create your views here.
 
@@ -55,7 +56,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Contributor.objects.select_related('user').filter(
             project_id=self.kwargs['project_pk']
-        )
+        ).order_by('-created_at')  # Ensure consistent ordering
 
     def perform_create(self, serializer):
         project = Project.objects.get(id=self.kwargs['project_pk'])
@@ -69,6 +70,12 @@ class IssueViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             return IssueListSerializer
         return IssueSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        if 'project_pk' in self.kwargs:
+            context['project'] = Project.objects.get(id=self.kwargs['project_pk'])
+        return context
 
     def get_queryset(self):
         project = Project.objects.get(id=self.kwargs['project_pk'])
@@ -94,10 +101,15 @@ class IssueViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         project = Project.objects.get(id=self.kwargs['project_pk'])
-        contributor = Contributor.objects.get(
+        # Get the most recent contributor record for this user and project
+        contributor = Contributor.objects.filter(
             user=self.request.user,
             project=project
-        )
+        ).order_by('-created_at').first()
+        
+        if not contributor:
+            raise ValidationError("You must be a contributor to create issues")
+            
         serializer.save(
             project=project,
             created_by=contributor,
@@ -133,10 +145,15 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         issue = Issue.objects.get(id=self.kwargs['issue_pk'])
-        contributor = Contributor.objects.get(
+        # Get the most recent contributor record for this user and project
+        contributor = Contributor.objects.filter(
             user=self.request.user,
             project=issue.project
-        )
+        ).order_by('-created_at').first()
+        
+        if not contributor:
+            raise ValidationError("You must be a contributor to create comments")
+            
         serializer.save(
             issue=issue,
             created_by=contributor

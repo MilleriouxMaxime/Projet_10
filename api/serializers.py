@@ -42,9 +42,17 @@ class IssueSerializer(serializers.ModelSerializer):
     )
     assigned_to = serializers.SlugRelatedField(
         slug_field='user__username',
-        queryset=Contributor.objects.all(),
+        queryset=Contributor.objects.none(),
         required=False
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        project = self.context.get('project')
+        if project:
+            self.fields['assigned_to'].queryset = Contributor.objects.filter(
+                project=project
+            )
 
     class Meta:
         model = Issue
