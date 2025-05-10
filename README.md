@@ -2,6 +2,10 @@
 
 This is a Django REST Framework API project for SoftDesk.
 
+## Requirements
+
+- Python 3.13
+
 ## Setup Instructions
 
 1. Install pipenv if you haven't already:
@@ -75,6 +79,11 @@ To test the API endpoints using Postman:
 
 4. Before making requests, make sure the development server is running (`python manage.py runserver`).
 
-5. For authenticated endpoints, you'll need to:
+5. Create test users:
+   - Use the "Create User1" and "Create User2" requests in the Postman collection
+   - These requests will create two test users that you can use for testing the API
+   - Make sure to run these requests before attempting to authenticate
+
+6. For authenticated endpoints, you'll need to:
    - First login using the `/api/token/` endpoint
    - The token will be set to the `token` global variable to be used in the requests in the "Authorization" tab with the format: `Bearer your_access_token` 
