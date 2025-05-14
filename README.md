@@ -61,7 +61,7 @@ python manage.py clean_db
 - `softdesk/` - Main project directory
 - `api/` - API application directory
 - `users/` - User management application directory
-
+- `db.sqlite3` - SQLite database file (already configured and initialized with superuser)
 
 ## Testing with Postman
 
