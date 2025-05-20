@@ -66,14 +66,15 @@
 					"response": []
 				},
 				{
-					"name": "Get Token User1",
+					"name": "Get JWT Token User1",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"let response = pm.response.json();\r",
-									"pm.environment.set(\"token\", response.token); "
+									"let response = pm.response.json();",
+									"pm.environment.set(\"access_token\", response.access);",
+									"pm.environment.set(\"refresh_token\", response.refresh);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -107,14 +108,15 @@
 					"response": []
 				},
 				{
-					"name": "Get Token User2",
+					"name": "Get JWT Token User2",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"let response = pm.response.json();\r",
-									"pm.environment.set(\"token\", response.token); "
+									"let response = pm.response.json();",
+									"pm.environment.set(\"access_token\", response.access);",
+									"pm.environment.set(\"refresh_token\", response.refresh);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -146,6 +148,77 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Refresh JWT Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"pm.environment.set(\"access_token\", response.access);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/token/refresh/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"token",
+								"refresh",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify JWT Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"{{access_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/token/verify/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"token",
+								"verify",
+								""
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -159,7 +232,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							},
 							{
 								"key": "Content-Type",
@@ -191,7 +264,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -215,7 +288,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -240,7 +313,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							},
 							{
 								"key": "Content-Type",
@@ -273,7 +346,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -303,7 +376,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							},
 							{
 								"key": "Content-Type",
@@ -337,7 +410,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -363,7 +436,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -395,7 +468,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							},
 							{
 								"key": "Content-Type",
@@ -429,7 +502,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -455,7 +528,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -482,7 +555,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							},
 							{
 								"key": "Content-Type",
@@ -517,7 +590,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -549,7 +622,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							},
 							{
 								"key": "Content-Type",
@@ -585,7 +658,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -613,7 +686,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -642,7 +715,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							},
 							{
 								"key": "Content-Type",
@@ -679,7 +752,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Token {{token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
