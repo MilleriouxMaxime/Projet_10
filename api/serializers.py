@@ -53,6 +53,12 @@ class IssueSerializer(serializers.ModelSerializer):
             self.fields['assigned_to'].queryset = Contributor.objects.filter(
                 project=project
             )
+        else:
+            # If project doesn't exist, make assigned_to read-only
+            self.fields['assigned_to'] = serializers.SlugRelatedField(
+                slug_field='user__username',
+                read_only=True
+            )
 
     class Meta:
         model = Issue

@@ -74,12 +74,15 @@ class IssueViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         context = super().get_serializer_context()
         if 'project_pk' in self.kwargs:
-            context['project'] = Project.objects.get(id=self.kwargs['project_pk'])
+            try:
+                context['project'] = Project.objects.get(id=self.kwargs['project_pk'])
+            except Project.DoesNotExist:
+                context['project'] = None
         return context
 
     def get_queryset(self):
-        project = Project.objects.get(id=self.kwargs['project_pk'])
         try:
+            project = Project.objects.get(id=self.kwargs['project_pk'])
             # Check if user is a contributor to the project
             Contributor.objects.get(
                 user=self.request.user,
@@ -91,7 +94,7 @@ class IssueViewSet(viewsets.ModelViewSet):
             ).filter(
                 project_id=self.kwargs['project_pk']
             ).order_by('-created_at')  # Order by creation date, newest first
-        except Contributor.DoesNotExist:
+        except (Contributor.DoesNotExist, Project.DoesNotExist):
             return Issue.objects.none()
 
     def get_permissions(self):
@@ -100,21 +103,24 @@ class IssueViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def perform_create(self, serializer):
-        project = Project.objects.get(id=self.kwargs['project_pk'])
-        # Get the most recent contributor record for this user and project
-        contributor = Contributor.objects.filter(
-            user=self.request.user,
-            project=project
-        ).order_by('-created_at').first()
-        
-        if not contributor:
-            raise ValidationError("You must be a contributor to create issues")
+        try:
+            project = Project.objects.get(id=self.kwargs['project_pk'])
+            # Get the most recent contributor record for this user and project
+            contributor = Contributor.objects.filter(
+                user=self.request.user,
+                project=project
+            ).order_by('-created_at').first()
             
-        serializer.save(
-            project=project,
-            created_by=contributor,
-            assigned_to=contributor
-        )
+            if not contributor:
+                raise ValidationError("You must be a contributor to create issues")
+                
+            serializer.save(
+                project=project,
+                created_by=contributor,
+                assigned_to=contributor
+            )
+        except Project.DoesNotExist:
+            raise ValidationError("Project does not exist")
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
@@ -122,8 +128,8 @@ class CommentViewSet(viewsets.ModelViewSet):
     pagination_class = CommentPagination
 
     def get_queryset(self):
-        issue = Issue.objects.get(id=self.kwargs['issue_pk'])
         try:
+            issue = Issue.objects.get(id=self.kwargs['issue_pk'])
             # Check if user is a contributor to the project
             Contributor.objects.get(
                 user=self.request.user,
@@ -137,6 +143,8 @@ class CommentViewSet(viewsets.ModelViewSet):
             ).order_by('-created_at')  # Order by creation date, newest first
         except Contributor.DoesNotExist:
             return Comment.objects.none()
+        except Issue.DoesNotExist:
+            return Comment.objects.none()
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -144,17 +152,20 @@ class CommentViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def perform_create(self, serializer):
-        issue = Issue.objects.get(id=self.kwargs['issue_pk'])
-        # Get the most recent contributor record for this user and project
-        contributor = Contributor.objects.filter(
-            user=self.request.user,
-            project=issue.project
-        ).order_by('-created_at').first()
-        
-        if not contributor:
-            raise ValidationError("You must be a contributor to create comments")
+        try:
+            issue = Issue.objects.get(id=self.kwargs['issue_pk'])
+            # Get the most recent contributor record for this user and project
+            contributor = Contributor.objects.filter(
+                user=self.request.user,
+                project=issue.project
+            ).order_by('-created_at').first()
             
-        serializer.save(
-            issue=issue,
-            created_by=contributor
-        )
+            if not contributor:
+                raise ValidationError("You must be a contributor to create comments")
+                
+            serializer.save(
+                issue=issue,
+                created_by=contributor
+            )
+        except Issue.DoesNotExist:
+            raise ValidationError("Issue does not exist")
